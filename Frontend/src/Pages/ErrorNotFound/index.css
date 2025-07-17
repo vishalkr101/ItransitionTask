@@ -1,0 +1,38 @@
+.error-not-found {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  text-align: center;
+  color: #333;
+  padding: 20px;
+}
+
+.error-not-found h1 {
+  font-size: 6rem;
+  font-weight: bold;
+  color: #ff6b6b;
+  margin: 0;
+}
+
+.error-not-found p {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  color: #555;
+}
+
+.home-link {
+  text-decoration: none;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.home-link:hover {
+  background-color: #0056b3;
+}

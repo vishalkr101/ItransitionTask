@@ -4,7 +4,7 @@ dotenv.config();
 const devConfig = {
   mongoURI: process.env.MONGODB_URI_DEV,
   port: process.env.PORT || 3000,
-  corsOrigin: 'http://localhost:5173/',
+  corsOrigin: 'http://localhost:5173',
 };
 
 const prodConfig = {

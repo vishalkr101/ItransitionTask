@@ -16,7 +16,7 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 }));
-app.use(morgan('dev'));
+app.use(morgan('dev')); //   Change to 'combined' for production logging
 
 app.use('/api', drugRoutes);
 
