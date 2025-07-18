@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import axios from 'axios';
 import {
     Table,
@@ -20,6 +20,27 @@ const DrugInfo = () => {
     const [page, setPage] = useState(0);
     const LIMIT = 20; // Number of items per page
     const { totalDrugsCount } = drugsInfo;
+
+    const [selectedCompany, setSelectedCompany] = useState("all-companies");
+
+    // Extract unique companies for dropdown
+    const companyOptions = useMemo(() => {
+        if (!drugsInfo?.data) return [];
+        const companies = drugsInfo.data.map(drug => drug.company);
+        return Array.from(new Set(companies));
+    }, [drugsInfo]);
+
+    // Filter drugs by selected company
+    const filteredDrugs = useMemo(() => {
+        if (!drugsInfo?.data) return [];
+        if (selectedCompany === "all-companies") return drugsInfo.data;
+        return drugsInfo.data.filter(drug => drug.company === selectedCompany);
+    }, [drugsInfo, selectedCompany]);
+
+    const handlePageChange = (event, newPage) => {
+        setPage(newPage);
+        setSelectedCompany("all-companies");
+    };
 
     useEffect(() => {
         const fetchDrugs = async () => {
@@ -50,7 +71,7 @@ const DrugInfo = () => {
         };
 
         fetchDrugs();
-    }, [page]);
+    }, [page]); // Add selectedCompany to the dependency array
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
@@ -60,6 +81,19 @@ const DrugInfo = () => {
             <Typography variant="h5" gutterBottom>
                 Drug Data
             </Typography>
+            <Box mb={2}>
+                <label htmlFor="company-filter"><strong>Filter by Company:</strong> </label>
+                <select
+                    id="company-filter"
+                    value={selectedCompany}
+                    onChange={e => setSelectedCompany(e.target.value)}
+                >
+                    <option value="all-companies">All Companies</option>
+                    {companyOptions.map(company => (
+                        <option key={company} value={company}>{company}</option>
+                    ))}
+                </select>
+            </Box>
             <TableContainer component={Paper}>
                 <Table aria-label="drug info table">
                     <TableHead>
@@ -72,9 +106,9 @@ const DrugInfo = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {drugsInfo?.data?.map((drug, index) => (
+                        {filteredDrugs.map((drug, index) => (
                             <TableRow key={drug.code}>
-                                <TableCell>{index + 1}</TableCell>
+                                <TableCell>{(page * LIMIT) + index + 1}</TableCell>
                                 <TableCell>{drug.code}</TableCell>
                                 <TableCell>{`${drug.genericName} (${drug.brandName})`}</TableCell>
                                 <TableCell>{drug.company}</TableCell>
@@ -89,7 +123,7 @@ const DrugInfo = () => {
                     component="div"
                     count={totalDrugsCount}
                     page={page}
-                    onPageChange={(event, newPage) => setPage(newPage)}
+                    onPageChange={(event, newPage) => handlePageChange(event, newPage)}
                     rowsPerPage={LIMIT}
                     rowsPerPageOptions={[]}       // to hide the rows per page dropdown
                     labelRowsPerPage=""           // // to hide the rows per page label
